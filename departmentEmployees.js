@@ -83,8 +83,8 @@ function addRole(){
         type: "number",
         name: "department_id"
     }
-    ]).then(function(res) {
-        connection.query("INSERT INTO roles(title, salary department_id) VALUES(?, ?, ?, ?)", [response.title, response.salary, response.department_id], function (err, data) {
+    ]).then(function (response) {
+        connection.query("INSERT INTO role (title, salary, department_id) values (?, ?, ?)", [response.title, response.salary, response.department_id], function (err, data) {
             console.table(data);
         })
         askQuestions();
@@ -113,9 +113,8 @@ function addEmployee(){
         message: "What is the employees manager's ID?"
     }
 ]).then(function(res) {
-    connection.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", [res.firstName, res.lastName, res.roleId, res.managerId], function(err, data) {
+    connection.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", [res.firstName, res.lastName, res.role_id, res.managerId], function(err, data) {
         if (err) throw err;
-        console.table(data);
         askQuestions();
     })
 })
@@ -139,7 +138,7 @@ function updateEmployeeRole(){
     inquirer.prompt([
         {
             message: "Which employee would you like to update?",
-            type: "list",
+            type: "input",
             name: "name"
         }, {
             message: "Enter the new role ID:",
@@ -152,4 +151,5 @@ function updateEmployeeRole(){
         })
         askQuestions();
     })
+
 };
