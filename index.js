@@ -26,6 +26,7 @@ function askQuestions(){
             "View All Departments",
             "View All Employees",
             "Update Employee Role",
+            "Delete Employee",
             "QUIT"
         ],
         name: "selection"
@@ -47,6 +48,9 @@ function askQuestions(){
         }
         if (answers.selection === "Update Employee Role"){
             updateEmployeeRole();
+        }
+        if (answers.selection === "Delete Employee"){
+            deleteEmployee();
         }
         if (answers.selection === "QUIT"){
             connection.end();
@@ -83,8 +87,8 @@ function addRole(){
         type: "number",
         name: "department_id"
     }
-    ]).then(function (response) {
-        connection.query("INSERT INTO role (title, salary, department_id) values (?, ?, ?)", [response.title, response.salary, response.department_id], function (err, data) {
+    ]).then(function (res) {
+        connection.query("INSERT INTO role (title, salary, department_id) values (?, ?, ?)", [res.title, res.salary, res.department_id], function (err, data) {
             console.table(data);
         })
         askQuestions();
@@ -113,8 +117,9 @@ function addEmployee(){
         message: "What is the employees manager's ID?"
     }
 ]).then(function(res) {
-    connection.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", [res.firstName, res.lastName, res.role_id, res.managerId], function(err, data) {
+    connection.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`, [res.first_name, res.last_name, res.role_id, res.manager_id], function(err, data) {
         if (err) throw err;
+        console.log(data);
         askQuestions();
     })
 })
@@ -145,8 +150,24 @@ function updateEmployeeRole(){
             type: "number",
             name: "role_id"
         }
-    ]).then(function (response) {
-        connection.query("UPDATE employee SET role_id = ? WHERE first_name = ?", [response.role_id, response.name], function (err, data) {
+    ]).then(function (res) {
+        connection.query("UPDATE employee SET role_id = ? WHERE first_name = ?", [res.role_id, res.name], function (err, data) {
+            console.table(data);
+        })
+        askQuestions();
+    })
+
+};
+
+function deleteEmployee(){
+    inquirer.prompt([
+        {
+            message: "Which employee would you like to delete?",
+            type: "input",
+            name: "employee_id"
+        }
+    ]).then(function (res) {
+        connection.query("DELETE FROM employee WHERE id = ?", [res.employee_id], function (err, data) {
             console.table(data);
         })
         askQuestions();
